@@ -13,7 +13,7 @@ This project does the same thing digitally: it opens your phone camera and appli
 | 📷 **[Open the camera](https://maximusashraf.github.io/red-blue-lens/)** | Live camera with *Normal / Red / Blue* filters. Works on your phone. |
 | ✏️ **[Make your own puzzle](https://maximusashraf.github.io/red-blue-lens/make.html)** | Type two sentences or pick two shapes, preview them through both filters, download and print. |
 
-1. Open the camera link and tap **Start camera** (or tap an example picture under the buttons if you just want to look).
+1. Open the camera link and tap **Start camera** (point it at a puzzle from this page, on screen or printed).
 2. Switch between **Red filter** and **Blue filter**. A different hidden picture appears in each.
 3. Want your own? Open the puzzle page, then tap **Open in camera** to test it right away.
 
@@ -85,7 +85,6 @@ docs/index.html     camera page (served by GitHub Pages)
 docs/make.html      puzzle maker page
 docs/shared.js      translations (en/ar), header, filter code
 docs/shared.css     styles
-docs/examples/      sample puzzles used by the camera page
 docs/*-strip.png    images used in this README
 ```
 
