@@ -6,6 +6,19 @@ Two images (or two sentences) are drawn on top of each other, one in **blue ink*
 
 This project does the same thing digitally: it opens your phone camera and applies a virtual red or blue filter, so you can read the puzzles without any physical glasses. It also includes a puzzle generator so you can make your own and print them.
 
+## Try it in 30 seconds
+
+| | |
+|---|---|
+| 📷 **[Open the camera](https://maximusashraf.github.io/red-blue-lens/)** | Live camera with *Normal / Red / Blue* filters. Works on your phone. |
+| ✏️ **[Make your own puzzle](https://maximusashraf.github.io/red-blue-lens/make.html)** | Type two sentences or pick two shapes, preview them through both filters, download and print. |
+
+1. Open the camera link and tap **Start camera** (or tap an example picture under the buttons if you just want to look).
+2. Switch between **Red filter** and **Blue filter**. A different hidden picture appears in each.
+3. Want your own? Open the puzzle page, then tap **Open in camera** to test it right away.
+
+The app is in **English by default**. Tap **عربي** in the top corner for Arabic (right-to-left); it remembers your choice.
+
 ![Hard puzzle: normal view, red filter, blue filter](docs/hard-strip.png)
 
 *Left: what you see on paper. Middle: through the red filter (only the blue drawing survives). Right: through the blue filter (only the red drawing survives).*
@@ -27,27 +40,26 @@ When generating puzzles, both layers are drawn with the canvas `multiply` blend 
 
 ## Features
 
+- **Two pages**: `index.html` (camera) and `make.html` (puzzle maker), English and Arabic.
 - **Camera mode**: live camera with *Normal / Red filter / Blue filter*, a contrast slider and front/back camera switch.
 - **Photo mode**: pick an image (on phones this can also open the camera) and flip between filters.
 - **Text puzzles**: type two sentences, they are auto-wrapped to fill the canvas with the largest possible font, then overlaid in blue and red.
 - **Shape puzzles**: pick two of 12 shapes. Difficulty levels add random scribbles, rotation and offsets so the shapes are hard to make out by eye. The hidden shape is drawn with a thicker stroke than the noise so it stands out under the filter.
 - **Preview** of the normal, red-filtered and blue-filtered result before you print.
 - **PNG export** for printing.
-- Single static HTML file, no build step, no dependencies. The UI is in Arabic (RTL), and the puzzle text can be in any language.
+- Plain static HTML/JS, no build step, no dependencies. The UI is in Arabic (RTL), and the puzzle text can be in any language.
 
-## Run it
+## Run it locally
 
-The camera API needs a secure context (`https://` or `localhost`).
-
-On your computer:
+The camera API needs a secure context (`https://` or `localhost`). From the repo root:
 
 ```bash
-cd app
+cd docs
 python3 -m http.server 8000
 # open http://localhost:8000
 ```
 
-To try it on your phone, serve it over HTTPS on your local network (for example with a self-signed certificate, or a tunnelling tool), or deploy the `app/` folder to any static host such as Netlify Drop, GitHub Pages or Cloudflare Pages. Without HTTPS the live camera is blocked by the browser, but you can still use the photo button to load a picture of a puzzle.
+The `docs/` folder is a static site, so it is also what GitHub Pages serves. You can deploy it to any static host. Without HTTPS the live camera is blocked by the browser, but you can still load a picture of a puzzle with the photo button.
 
 ## Real-world use (no app needed)
 
@@ -62,8 +74,12 @@ Print puzzles in saturated, pure red and blue. Duller inks reduce how well each 
 ## Project layout
 
 ```
-app/index.html   the whole application (HTML + CSS + JS)
-docs/            example puzzles and filtered views used in this README
+docs/index.html     camera page (served by GitHub Pages)
+docs/make.html      puzzle maker page
+docs/shared.js      translations (en/ar), header, filter code
+docs/shared.css     styles
+docs/examples/      sample puzzles used by the camera page
+docs/*-strip.png    images used in this README
 ```
 
 ## License
