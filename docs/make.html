@@ -19,16 +19,28 @@
     <textarea id="tb" class="b"></textarea>
     <div class="lbl r" data-i="red_text"></div>
     <textarea id="tr" class="r"></textarea>
+    <div class="lbl m" data-i="mag_text"></div>
+    <textarea id="tm" class="m"></textarea>
   </div>
 
   <div id="shpbox" class="pad" style="padding:0" hidden>
     <div class="hint" data-i="hint_shape"></div>
     <div class="lbl b" data-i="blue_shape"></div><select id="sb"></select>
     <div class="lbl r" data-i="red_shape"></div><select id="sr"></select>
+    <div class="lbl m" data-i="mag_shape"></div><select id="sm"></select>
     <div class="lbl" data-i="level"></div>
     <select id="lvl"><option value="0" data-i="lv0"></option><option value="1" data-i="lv1"></option><option value="2" data-i="lv2"></option><option value="3" data-i="lv3" selected></option></select>
     <input id="seedv" type="hidden" value="7">
     <div class="row"><button class="mini" id="rnd" data-i="rnd"></button><button class="mini" id="reroll" data-i="reroll"></button></div>
+  </div>
+
+  <div id="mirbox" class="pad" style="padding:0">
+    <div class="lbl" data-i="opt_mirror"></div>
+    <div class="row">
+      <label class="chk"><input type="checkbox" id="mb"> <span class="lbl b" data-i="mir_b"></span></label>
+      <label class="chk"><input type="checkbox" id="mr"> <span class="lbl r" data-i="mir_r"></span></label>
+      <label class="chk"><input type="checkbox" id="mm"> <span class="lbl m" data-i="mir_m"></span></label>
+    </div>
   </div>
 
   <div id="imgbox" class="pad" style="padding:0" hidden>
@@ -78,18 +90,24 @@ function fit(ctx, text, maxW, maxH) {
   }
   return { lines: words, size: 24 };
 }
-function drawText(ctx, bt, rt) {
+function drawText(ctx, bt, rt, mt) {
+  const fl = flips();
   ctx.globalCompositeOperation = 'source-over'; ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, H);
   ctx.globalCompositeOperation = 'multiply'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   ctx.direction = lang === 'ar' ? 'rtl' : 'ltr';
-  [[bt, '#0000ff'], [rt, '#ff0000']].forEach(([txt, col]) => {
+  const layers = [[bt, '#0000ff', fl.b], [rt, '#ff0000', fl.r]];
+  if (mt && mt.trim()) layers.push([mt, '#ff00ff', fl.m]);   // magenta: invisible through both filters
+  layers.forEach(([txt, col, flip]) => {
     const { lines, size } = fit(ctx, txt || ' ', W * .94, H * .92);
+    ctx.save(); if (flip) { ctx.translate(W, 0); ctx.scale(-1, 1); }
     ctx.font = FONT(size); ctx.fillStyle = col; ctx.strokeStyle = col; ctx.lineWidth = size * .04; ctx.lineJoin = 'round';
     const lh = size * 1.2, y0 = H / 2 - (lines.length - 1) * lh / 2;
     lines.forEach((l, i) => { ctx.fillText(l, W / 2, y0 + i * lh); ctx.strokeText(l, W / 2, y0 + i * lh); });
+    ctx.restore();
   });
   ctx.globalCompositeOperation = 'source-over';
 }
+const flips = () => ({ b: $('#mb').checked, r: $('#mr').checked, m: $('#mm').checked });
 
 /* ---- shapes (unit box -50..50) ---- */
 const arc = (c, x, y, r, a = 0, b = Math.PI * 2) => { c.moveTo(x + r * Math.cos(a), y + r * Math.sin(a)); c.arc(x, y, r, a, b); };
@@ -121,18 +139,23 @@ function scribble(ctx, col, n, w) {
     ctx.stroke();
   }
 }
-function drawShapes(ctx, bn, rn) {
-  const lvl = +$('#lvl').value; seed = +$('#seedv').value;
+function drawShapes(ctx, bn, rn, mn) {
+  const lvl = +$('#lvl').value, fl = flips(); seed = +$('#seedv').value;
   ctx.globalCompositeOperation = 'source-over'; ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, H);
   ctx.globalCompositeOperation = 'multiply';
-  [[bn, '#0000ff'], [rn, '#ff0000']].forEach(([n, col]) => {
-    const base = Math.min(W, H) / 100;
-    ctx.save(); ctx.translate(W / 2, H / 2); ctx.scale(base, base);
-    if (lvl > 0) scribble(ctx, col, [0, 10, 22, 52][lvl], lvl === 3 ? .45 : .7);
-    ctx.restore(); ctx.save();
+  const layers = [[bn, '#0000ff', fl.b], [rn, '#ff0000', fl.r]];
+  if (mn) layers.push([mn, '#ff00ff', fl.m]);                  // magenta: invisible through both filters
+  layers.forEach(([n, col, flip], idx) => {
+    const base = Math.min(W, H) / 100, magenta = idx === 2;
+    if (!magenta) {
+      ctx.save(); ctx.translate(W / 2, H / 2); ctx.scale(base, base);
+      if (lvl > 0) scribble(ctx, col, [0, 10, 22, 52][lvl], lvl === 3 ? .45 : .7);
+      ctx.restore();
+    }
+    ctx.save();
     const rot = lvl ? (rng() - .5) * (lvl === 3 ? .7 : 1) : 0, sc = base * (lvl === 3 ? .8 + rng() * .15 : lvl ? .62 + rng() * .3 : .92);
     const dx = lvl ? (rng() - .5) * (lvl === 3 ? 14 : 26) : 0, dy = lvl ? (rng() - .5) * (lvl === 3 ? 10 : 18) : 0;
-    ctx.translate(W / 2 + dx * base, H / 2 + dy * base); ctx.rotate(rot); ctx.scale(sc, sc);
+    ctx.translate(W / 2 + dx * base, H / 2 + dy * base); ctx.rotate(rot); ctx.scale(flip ? -sc : sc, sc);
     ctx.beginPath(); SHAPES[n](ctx); ctx.strokeStyle = col; ctx.lineWidth = [7, 10, 10, 13][lvl]; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.stroke(); ctx.restore();
   });
   ctx.globalCompositeOperation = 'source-over';
@@ -142,7 +165,7 @@ function drawShapes(ctx, bn, rn) {
 let pmode = 't';
 function render() {
   puz.width = W; puz.height = H; const c = puz.getContext('2d');
-  if (pmode === 'i') drawImg(c); else if (pmode === 's') drawShapes(c, $('#sb').value, $('#sr').value); else drawText(c, $('#tb').value, $('#tr').value);
+  if (pmode === 'i') drawImg(c); else if (pmode === 's') drawShapes(c, $('#sb').value, $('#sr').value, $('#sm').value); else drawText(c, $('#tb').value, $('#tr').value, $('#tm').value);
   [['#c0', 'n'], ['#c1', 'r'], ['#c2', 'b']].forEach(([id, m]) => filterInto(W, H, x => x.drawImage(puz, 0, 0), $(id), m, 2.2));
 }
 let upImg = null;
@@ -152,14 +175,15 @@ function drawImg(c) {
   const k = Math.min(W / upImg.width, H / upImg.height), w = upImg.width * k, h = upImg.height * k;
   c.drawImage(upImg, (W - w) / 2, (H - h) / 2, w, h);
 }
-function setMode(m) { pmode = m; ['t', 's', 'i'].forEach(x => $('#m' + x).classList.toggle('on', m === x)); $('#txtbox').hidden = m !== 't'; $('#shpbox').hidden = m !== 's'; $('#imgbox').hidden = m !== 'i'; $('#gen').hidden = m === 'i'; render(); }
+function setMode(m) { pmode = m; ['t', 's', 'i'].forEach(x => $('#m' + x).classList.toggle('on', m === x)); $('#txtbox').hidden = m !== 't'; $('#shpbox').hidden = m !== 's'; $('#imgbox').hidden = m !== 'i'; $('#gen').hidden = m === 'i'; $('#mirbox').hidden = m === 'i'; render(); }
 $('#mi').onclick = () => setMode('i');
 $('#pick').onclick = () => $('#file').click();
 $('#file').onchange = e => { const f = e.target.files[0]; if (!f) return; const im = new Image(); im.onload = () => { upImg = im; render(); }; im.src = URL.createObjectURL(f); };
 $('#mt').onclick = () => setMode('t'); $('#ms').onclick = () => setMode('s');
 $('#gen').onclick = render;
-$('#tb').oninput = $('#tr').oninput = () => { clearTimeout(window._d); window._d = setTimeout(render, 250); };
-$('#sb').onchange = $('#sr').onchange = $('#lvl').onchange = render;
+$('#tb').oninput = $('#tr').oninput = $('#tm').oninput = () => { clearTimeout(window._d); window._d = setTimeout(render, 250); };
+$('#sb').onchange = $('#sr').onchange = $('#sm').onchange = $('#lvl').onchange = render;
+['#mb', '#mr', '#mm'].forEach(id => $(id).onchange = render);
 $('#reroll').onclick = () => { $('#seedv').value = Math.random() * 1e6 | 0; render(); };
 $('#rnd').onclick = () => { const k = Object.keys(SHAPES); const a = k[Math.random() * k.length | 0]; let b; do { b = k[Math.random() * k.length | 0]; } while (b === a); $('#sb').value = a; $('#sr').value = b; render(); };
 $('#dl').onclick = () => { render(); const a = document.createElement('a'); a.download = 'puzzle.png'; a.href = puz.toDataURL('image/png'); a.click(); };
@@ -167,9 +191,11 @@ $('#cam').onclick = () => { render(); try { sessionStorage.setItem('rbl_img', pu
 
 let prevLang = null;
 function fillLang() {
-  const keepB = $('#sb').value || 'happy', keepR = $('#sr').value || 'angry';
+  const keepB = $('#sb').value || 'happy', keepR = $('#sr').value || 'angry', keepM = $('#sm').value || '';
   ['#sb', '#sr'].forEach(id => { $(id).innerHTML = ''; Object.keys(SHAPES).forEach(k => { const o = document.createElement('option'); o.value = k; o.textContent = t('s_' + k); $(id).appendChild(o); }); });
-  $('#sb').value = keepB; $('#sr').value = keepR;
+  $('#sm').innerHTML = ''; const none = document.createElement('option'); none.value = ''; none.textContent = t('none_shape'); $('#sm').appendChild(none);
+  Object.keys(SHAPES).forEach(k => { const o = document.createElement('option'); o.value = k; o.textContent = t('s_' + k); $('#sm').appendChild(o); });
+  $('#sb').value = keepB; $('#sr').value = keepR; $('#sm').value = keepM;
   $('#chips').innerHTML = '';
   PRESETS[lang].forEach(([b, r]) => { const x = document.createElement('button'); x.textContent = b.length > 28 ? b.slice(0, 28) + '…' : b + ' + ' + r; if (b.length <= 28) x.textContent = b + ' + ' + r;
     x.onclick = () => { $('#tb').value = b; $('#tr').value = r; setMode('t'); }; $('#chips').appendChild(x); });

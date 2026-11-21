@@ -12,6 +12,8 @@ const L = {
     e_nocam:'No camera was found on this device.', e_busy:'The camera is being used by another app. Close it and tap “Try again”.', e_secure:'The camera only works on a secure (https) page.',
     
     tab_text:'✍️ Sentences', tab_shape:'🔷 Shapes', tab_img:'🖼 Upload image',
+    mag_text:'Normal-view sentence (magenta, optional). Invisible through both filters, readable without one.', mag_shape:'Normal-view shape (magenta, optional)', none_shape:'— none —',
+    opt_mirror:'Mirror (flip left to right, like in a mirror)', mir_b:'Blue', mir_r:'Red', mir_m:'Normal-view layer',
     hint_img:'Pick a picture or screenshot of a puzzle to see it through the red and blue filters.', pick_img:'Choose an image',
     hint_text:'Write two sentences. They are drawn on top of each other, one in blue and one in red. By eye it is a mess. Through the red filter you see the blue one, through the blue filter you see the red one.',
     blue_text:'Blue sentence (shown by the red filter)', red_text:'Red sentence (shown by the blue filter)',
@@ -37,6 +39,8 @@ const L = {
     e_nocam:'مفيش كاميرا على الجهاز ده.', e_busy:'الكاميرا مستخدمة في تطبيق تاني. اقفله واضغط «حاول تاني».', e_secure:'الكاميرا بتشتغل بس على صفحة آمنة (https).',
     
     tab_text:'✍️ جمل', tab_shape:'🔷 أشكال', tab_img:'🖼 ارفع صورة',
+    mag_text:'جملة تتقرا بالعين العادية بس (ماجنتا، اختياري). بتختفي بالفلترين وبتتقرا من غير فلتر.', mag_shape:'شكل يتشاف بالعين العادية بس (ماجنتا، اختياري)', none_shape:'— مفيش —',
+    opt_mirror:'عكس (قلب يمين وشمال زي المراية)', mir_b:'الأزرق', mir_r:'الأحمر', mir_m:'طبقة العين العادية',
     hint_img:'اختار صورة أو سكرين شوت للغز عشان تشوفها بالفلتر الأحمر والأزرق.', pick_img:'اختار صورة',
     hint_text:'اكتب جملتين. هيتركبوا فوق بعض (واحدة أزرق وواحدة أحمر). بالعين مش مفهومة، وبالفلتر الأحمر هتشوف الزرقا وبالفلتر الأزرق هتشوف الحمرا.',
     blue_text:'الجملة الزرقا (بتظهر بالفلتر الأحمر)', red_text:'الجملة الحمرا (بتظهر بالفلتر الأزرق)',

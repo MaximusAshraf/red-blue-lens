@@ -40,3 +40,7 @@ h3{margin:4px 0}
 .guide{background:var(--card);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
 .guide h3{margin:0;color:var(--acc)}
 .guide pre{margin:0;white-space:pre-wrap;font:inherit;line-height:1.7;font-size:14px}
+.lbl.m{color:#ff5cff}
+textarea.m,#sm{border-color:#ff5cff}
+.chk{display:flex;align-items:center;gap:6px;background:var(--card);padding:10px 12px;border-radius:12px}
+.chk input{width:20px;height:20px;accent-color:var(--acc)}
