@@ -3,12 +3,16 @@ const $ = s => document.querySelector(s);
 const L = {
   en: {
     title_cam:'Red/Blue Lens', title_make:'Red/Blue Lens - Make a puzzle',
-    nav_cam:'📷 Camera', nav_make:'✏️ Make a puzzle',
     mode_n:'Normal', mode_r:'Red filter', mode_b:'Blue filter',
-    clarity:'Clarity', start:'▶︎ Start camera', flip:'🔄 Flip', upload:'🖼 Photo',
-    idle:'Tap “Start camera”, or load a photo.\nThen switch between the red and blue filters.',
-    cam_err:'Camera not available.\nAllow camera access and open this page over https.\nYou can still use “Photo”.',
-    tab_text:'✍️ Sentences', tab_shape:'🔷 Shapes',
+    start:'▶︎ Start camera', retry:'Try again', reload:'Reload page', copyaddr:'Copy settings address', copied:'Copied. Paste it in a new tab.',
+    g_title:'Camera access is blocked', g_intro:'The browser needs your permission to use the camera. To turn it on:',
+    g_ios:'1. Tap the “aA” icon in the address bar.\n2. Tap Website Settings, then Camera, then Allow.\n3. Or open the Settings app, then Safari, then Camera, and choose Allow or Ask.\n4. Come back here and tap “Try again”.',
+    g_android:'1. Tap the lock (or settings) icon next to the address.\n2. Tap Permissions, then Camera, then Allow.\n3. Or open Android Settings, then Apps, then your browser, then Permissions, then Camera, and choose Allow.\n4. Come back here and tap “Try again”.',
+    g_desktop:'1. Click the lock or camera icon at the left of the address bar.\n2. Set Camera to Allow.\n3. Reload the page, or click “Try again”.',
+    e_nocam:'No camera was found on this device.', e_busy:'The camera is being used by another app. Close it and tap “Try again”.', e_secure:'The camera only works on a secure (https) page.',
+    
+    tab_text:'✍️ Sentences', tab_shape:'🔷 Shapes', tab_img:'🖼 Upload image',
+    hint_img:'Pick a picture or screenshot of a puzzle to see it through the red and blue filters.', pick_img:'Choose an image',
     hint_text:'Write two sentences. They are drawn on top of each other, one in blue and one in red. By eye it is a mess. Through the red filter you see the blue one, through the blue filter you see the red one.',
     blue_text:'Blue sentence (shown by the red filter)', red_text:'Red sentence (shown by the blue filter)',
     hint_shape:'Pick two shapes. The blue one shows through the red filter, the red one through the blue filter.',
@@ -24,12 +28,16 @@ const L = {
   },
   ar: {
     title_cam:'عدسة الأحمر والأزرق', title_make:'عدسة الأحمر والأزرق - اعمل لغز',
-    nav_cam:'📷 الكاميرا', nav_make:'✏️ اعمل لغز',
     mode_n:'عادي', mode_r:'فلتر أحمر', mode_b:'فلتر أزرق',
-    clarity:'الوضوح', start:'▶︎ شغّل الكاميرا', flip:'🔄 اقلب', upload:'🖼 صورة',
-    idle:'اضغط «شغّل الكاميرا» أو ارفع صورة.\nوبعدين بدّل بين الفلتر الأحمر والأزرق.',
-    cam_err:'الكاميرا مش متاحة.\nاسمح بالكاميرا وافتح الصفحة من رابط https.\nتقدر برضه تستخدم «صورة».',
-    tab_text:'✍️ جمل', tab_shape:'🔷 أشكال',
+    start:'▶︎ شغّل الكاميرا', retry:'حاول تاني', reload:'أعد تحميل الصفحة', copyaddr:'انسخ عنوان الإعدادات', copied:'اتنسخ. الصقه في تبويب جديد.',
+    g_title:'الوصول للكاميرا مقفول', g_intro:'المتصفح محتاج إذنك عشان يستخدم الكاميرا. عشان تفتحها:',
+    g_ios:'1. اضغط على أيقونة «aA» في شريط العنوان.\n2. اضغط إعدادات الموقع، ثم الكاميرا، ثم سماح.\n3. أو افتح تطبيق الإعدادات، ثم Safari، ثم الكاميرا، واختار سماح أو اسأل.\n4. ارجع هنا واضغط «حاول تاني».',
+    g_android:'1. اضغط على أيقونة القفل (أو الإعدادات) جنب العنوان.\n2. اضغط الأذونات، ثم الكاميرا، ثم سماح.\n3. أو افتح إعدادات أندرويد، ثم التطبيقات، ثم المتصفح، ثم الأذونات، ثم الكاميرا، واختار سماح.\n4. ارجع هنا واضغط «حاول تاني».',
+    g_desktop:'1. اضغط على أيقونة القفل أو الكاميرا على يسار شريط العنوان.\n2. خلي الكاميرا على سماح.\n3. أعد تحميل الصفحة، أو اضغط «حاول تاني».',
+    e_nocam:'مفيش كاميرا على الجهاز ده.', e_busy:'الكاميرا مستخدمة في تطبيق تاني. اقفله واضغط «حاول تاني».', e_secure:'الكاميرا بتشتغل بس على صفحة آمنة (https).',
+    
+    tab_text:'✍️ جمل', tab_shape:'🔷 أشكال', tab_img:'🖼 ارفع صورة',
+    hint_img:'اختار صورة أو سكرين شوت للغز عشان تشوفها بالفلتر الأحمر والأزرق.', pick_img:'اختار صورة',
     hint_text:'اكتب جملتين. هيتركبوا فوق بعض (واحدة أزرق وواحدة أحمر). بالعين مش مفهومة، وبالفلتر الأحمر هتشوف الزرقا وبالفلتر الأزرق هتشوف الحمرا.',
     blue_text:'الجملة الزرقا (بتظهر بالفلتر الأحمر)', red_text:'الجملة الحمرا (بتظهر بالفلتر الأزرق)',
     hint_shape:'اختار شكلين. الأزرق بيظهر بالفلتر الأحمر، والأحمر بيظهر بالفلتر الأزرق.',
@@ -48,10 +56,9 @@ let lang = 'en';
 try { const s = localStorage.getItem('rbl_lang'); if (s === 'ar' || s === 'en') lang = s; } catch (e) {}
 const t = k => (L[lang] && L[lang][k]) || L.en[k] || k;
 
-function buildHeader(page) {
+function buildHeader() {
   const h = document.createElement('header');
-  h.innerHTML = '<a href="index.html" data-i="nav_cam"></a><a href="make.html" data-i="nav_make"></a><button id="lang" type="button"></button>';
-  h.querySelector(page === 'cam' ? 'a[href="index.html"]' : 'a[href="make.html"]').classList.add('on');
+  h.innerHTML = '<button id="lang" type="button"></button>';
   document.body.prepend(h);
   h.querySelector('#lang').onclick = () => { lang = lang === 'en' ? 'ar' : 'en'; try { localStorage.setItem('rbl_lang', lang); } catch (e) {} applyLang(); };
 }

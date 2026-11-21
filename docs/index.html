@@ -10,74 +10,115 @@
 </head>
 <body data-title="title_cam">
 <main>
-  <div id="stage"><canvas id="view"></canvas><div id="msg" data-i="idle"></div></div>
+  <div id="stage"><canvas id="view"></canvas></div>
   <div class="bar">
+    <div id="guide" class="guide" hidden>
+      <h3 id="gtitle" data-i="g_title"></h3>
+      <div class="hint" id="gintro" data-i="g_intro"></div>
+      <pre id="gsteps"></pre>
+      <div class="hint" id="gerr" hidden></div>
+      <div class="row">
+        <button class="mini" id="retry" data-i="retry"></button>
+        <button class="mini" id="reload" data-i="reload"></button>
+        <button class="mini" id="copyaddr" data-i="copyaddr" hidden></button>
+      </div>
+      <div class="hint" id="copied" hidden></div>
+    </div>
     <div class="modes">
       <button class="m-n on" data-m="n" data-i="mode_n"></button>
       <button class="m-r" data-m="r" data-i="mode_r"></button>
       <button class="m-b" data-m="b" data-i="mode_b"></button>
     </div>
-    <div class="row"><label data-i="clarity"></label><input id="k" type="range" min="1" max="5" step="0.1" value="2.2"></div>
-    <div class="row">
-      <button class="mini" id="start" data-i="start"></button>
-      <button class="mini" id="flip" data-i="flip"></button>
-      <button class="mini" id="up" data-i="upload"></button>
-      <input id="file" type="file" accept="image/*" hidden>
-    </div>
+    <button class="go" id="start" data-i="start" hidden></button>
   </div>
 </main>
 <script src="shared.js"></script>
 <script>
-buildHeader('cam');
-let mode = 'n', stream = null, facing = 'environment', still = null, raf = 0;
-const view = $('#view'), vid = document.createElement('video');
+buildHeader();
+const K = 2.2, view = $('#view'), vid = document.createElement('video');
 vid.playsInline = true; vid.muted = true;
-const K = () => +$('#k').value;
+let mode = 'n', stream = null, still = null, raf = 0, guideErr = '', lastKind = 'denied';
+
+const UA = navigator.userAgent;
+const isIOS = /iPad|iPhone|iPod/.test(UA) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const isAndroid = /Android/.test(UA);
+const settingsAddr = isIOS ? '' : /Edg\//.test(UA) ? 'edge://settings/content/camera' : /Firefox\//.test(UA) ? 'about:preferences#privacy' : /Chrome\//.test(UA) ? 'chrome://settings/content/camera' : '';
 
 document.querySelectorAll('.modes button').forEach(b => b.onclick = () => {
   mode = b.dataset.m;
   document.querySelectorAll('.modes button').forEach(x => x.classList.toggle('on', x === b));
   if (still) drawStill();
 });
-$('#k').oninput = () => { if (still) drawStill(); };
 
 function stopCam() { cancelAnimationFrame(raf); if (stream) stream.getTracks().forEach(t => t.stop()); stream = null; }
+// state: 'ask' (show the start button), 'running', 'denied' / 'error' (show help)
+function setUI(state) {
+  $('#start').hidden = state !== 'ask';
+  $('#guide').hidden = !(state === 'denied' || state === 'error');
+}
+function renderGuide(kind) {
+  const denied = kind === 'denied';
+  $('#gtitle').hidden = !denied; $('#gintro').hidden = !denied;
+  $('#gsteps').textContent = denied ? t(isIOS ? 'g_ios' : isAndroid ? 'g_android' : 'g_desktop') : '';
+  const e = $('#gerr'); e.hidden = denied; e.textContent = denied ? '' : t(guideErr);
+  $('#copyaddr').hidden = !(denied && settingsAddr);
+  $('#copied').hidden = true;
+}
+function fail(kind, err) { guideErr = err || ''; lastKind = kind; renderGuide(kind); setUI(kind); }
+
 async function startCam() {
   still = null; stopCam();
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { showErr(); return; }
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { fail('error', 'e_secure'); return; }
   try {
-    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: facing }, width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false });
-  } catch (e) { showErr(); return; }
+    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false });
+  } catch (e) {
+    const n = e && e.name;
+    if (n === 'NotFoundError' || n === 'OverconstrainedError') fail('error', 'e_nocam');
+    else if (n === 'NotReadableError' || n === 'AbortError') fail('error', 'e_busy');
+    else if (n === 'SecurityError') fail('error', 'e_secure');
+    else fail('denied');
+    return;
+  }
   vid.srcObject = stream; await vid.play();
-  $('#msg').hidden = true; loop();
+  setUI('running'); loop();
 }
-function showErr() { const m = $('#msg'); m.hidden = false; m.dataset.i = 'cam_err'; m.textContent = t('cam_err'); }
 function loop() {
   if (vid.videoWidth) {
     const sc = Math.min(1, 720 / Math.max(vid.videoWidth, vid.videoHeight));
     const w = Math.round(vid.videoWidth * sc), h = Math.round(vid.videoHeight * sc);
-    filterInto(w, h, c => c.drawImage(vid, 0, 0, w, h), view, mode, K());
+    filterInto(w, h, c => c.drawImage(vid, 0, 0, w, h), view, mode, K);
   }
   raf = requestAnimationFrame(loop);
 }
 function drawStill() {
   const s = still, sc = Math.min(1, 1000 / Math.max(s.width, s.height));
   const w = Math.round(s.width * sc), h = Math.round(s.height * sc);
-  filterInto(w, h, c => c.drawImage(s, 0, 0, w, h), view, mode, K());
+  filterInto(w, h, c => c.drawImage(s, 0, 0, w, h), view, mode, K);
 }
-function showImage(src) {
-  const im = new Image();
-  im.onload = () => { stopCam(); still = im; $('#msg').hidden = true; drawStill(); };
-  im.src = src;
-}
-$('#start').onclick = startCam;
-$('#flip').onclick = () => { facing = facing === 'environment' ? 'user' : 'environment'; if (stream) startCam(); };
-$('#up').onclick = () => $('#file').click();
-$('#file').onchange = e => { const f = e.target.files[0]; if (f) showImage(URL.createObjectURL(f)); };
 
-// a puzzle sent over from the "Make a puzzle" page
-try { const d = sessionStorage.getItem('rbl_img'); if (d) { sessionStorage.removeItem('rbl_img'); showImage(d); } } catch (e) {}
-window.onLang = () => { const m = $('#msg'); m.textContent = t(m.dataset.i); };
+$('#start').onclick = startCam;
+$('#retry').onclick = startCam;
+$('#reload').onclick = () => location.reload();
+$('#copyaddr').onclick = async () => {
+  const c = $('#copied'); c.hidden = false; c.textContent = t('copied');
+  try { await navigator.clipboard.writeText(settingsAddr); } catch (e) { c.textContent = settingsAddr; }
+};
+
+// If the camera is already allowed, start straight away. Otherwise show the start button
+// (or the help panel when the permission was blocked).
+(async function init() {
+  try { const d = sessionStorage.getItem('rbl_img'); if (d) {   // a puzzle sent over from the puzzle page
+    sessionStorage.removeItem('rbl_img');
+    const im = new Image(); im.onload = () => { still = im; drawStill(); setUI('ask'); }; im.src = d; return; } } catch (e) {}
+  let perm = null, state = 'prompt';
+  try { if (navigator.permissions) { perm = await navigator.permissions.query({ name: 'camera' }); state = perm.state; } } catch (e) {}
+  if (state === 'granted') startCam();
+  else if (state === 'denied') fail('denied');
+  else setUI('ask');
+  // when the viewer allows the camera in the browser settings, start by itself
+  if (perm) perm.onchange = () => { if (perm.state === 'granted' && !stream) startCam(); };
+})();
+window.onLang = () => renderGuide(lastKind);
 applyLang();
 </script>
 </body>

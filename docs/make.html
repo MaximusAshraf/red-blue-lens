@@ -11,7 +11,7 @@
 <body data-title="title_make">
 <main>
  <div class="pad">
-  <div class="seg"><button id="mt" class="on" data-i="tab_text"></button><button id="ms" data-i="tab_shape"></button></div>
+  <div class="seg"><button id="mt" class="on" data-i="tab_text"></button><button id="ms" data-i="tab_shape"></button><button id="mi" data-i="tab_img"></button></div>
 
   <div id="txtbox" class="pad" style="padding:0">
     <div class="hint" data-i="hint_text"></div>
@@ -31,6 +31,12 @@
     <div class="row"><button class="mini" id="rnd" data-i="rnd"></button><button class="mini" id="reroll" data-i="reroll"></button></div>
   </div>
 
+  <div id="imgbox" class="pad" style="padding:0" hidden>
+    <div class="hint" data-i="hint_img"></div>
+    <button class="go" id="pick" data-i="pick_img"></button>
+    <input id="file" type="file" accept="image/*" hidden>
+  </div>
+
   <button class="go" id="gen" data-i="gen"></button>
   <div class="trio">
     <figure><figcaption data-i="p_n"></figcaption><canvas id="c0"></canvas></figure>
@@ -44,7 +50,7 @@
 </main>
 <script src="shared.js"></script>
 <script>
-buildHeader('make');
+buildHeader();
 const W = 1200, H = 800, puz = document.createElement('canvas');
 const FONT = s => `900 ${s}px Cairo, "Arial Black", Tahoma, Arial, sans-serif`;
 const PRESETS = {
@@ -136,10 +142,20 @@ function drawShapes(ctx, bn, rn) {
 let pmode = 't';
 function render() {
   puz.width = W; puz.height = H; const c = puz.getContext('2d');
-  if (pmode === 's') drawShapes(c, $('#sb').value, $('#sr').value); else drawText(c, $('#tb').value, $('#tr').value);
+  if (pmode === 'i') drawImg(c); else if (pmode === 's') drawShapes(c, $('#sb').value, $('#sr').value); else drawText(c, $('#tb').value, $('#tr').value);
   [['#c0', 'n'], ['#c1', 'r'], ['#c2', 'b']].forEach(([id, m]) => filterInto(W, H, x => x.drawImage(puz, 0, 0), $(id), m, 2.2));
 }
-function setMode(m) { pmode = m; $('#mt').classList.toggle('on', m === 't'); $('#ms').classList.toggle('on', m === 's'); $('#txtbox').hidden = m !== 't'; $('#shpbox').hidden = m !== 's'; render(); }
+let upImg = null;
+function drawImg(c) {
+  c.fillStyle = '#fff'; c.fillRect(0, 0, W, H);
+  if (!upImg) return;
+  const k = Math.min(W / upImg.width, H / upImg.height), w = upImg.width * k, h = upImg.height * k;
+  c.drawImage(upImg, (W - w) / 2, (H - h) / 2, w, h);
+}
+function setMode(m) { pmode = m; ['t', 's', 'i'].forEach(x => $('#m' + x).classList.toggle('on', m === x)); $('#txtbox').hidden = m !== 't'; $('#shpbox').hidden = m !== 's'; $('#imgbox').hidden = m !== 'i'; $('#gen').hidden = m === 'i'; render(); }
+$('#mi').onclick = () => setMode('i');
+$('#pick').onclick = () => $('#file').click();
+$('#file').onchange = e => { const f = e.target.files[0]; if (!f) return; const im = new Image(); im.onload = () => { upImg = im; render(); }; im.src = URL.createObjectURL(f); };
 $('#mt').onclick = () => setMode('t'); $('#ms').onclick = () => setMode('s');
 $('#gen').onclick = render;
 $('#tb').oninput = $('#tr').oninput = () => { clearTimeout(window._d); window._d = setTimeout(render, 250); };

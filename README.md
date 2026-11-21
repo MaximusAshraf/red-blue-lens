@@ -13,9 +13,9 @@ This project does the same thing digitally: it opens your phone camera and appli
 | 📷 **[Open the camera](https://maximusashraf.github.io/red-blue-lens/)** | Live camera with *Normal / Red / Blue* filters. Works on your phone. |
 | ✏️ **[Make your own puzzle](https://maximusashraf.github.io/red-blue-lens/make.html)** | Type two sentences or pick two shapes, preview them through both filters, download and print. |
 
-1. Open the camera link and tap **Start camera** (point it at a puzzle from this page, on screen or printed).
+1. Open the camera link, allow the camera, and point it at a puzzle from this page (on screen or printed).
 2. Switch between **Red filter** and **Blue filter**. A different hidden picture appears in each.
-3. Want your own? Open the puzzle page, then tap **Open in camera** to test it right away.
+3. Want your own? Open the puzzle page, make one (or upload an image), then tap **Open in camera** to test it right away.
 
 The app is in **English by default**. Tap **عربي** in the top corner for Arabic (right-to-left); it remembers your choice.
 
@@ -25,7 +25,7 @@ The app is in **English by default**. Tap **عربي** in the top corner for Ara
 
 ![Easy puzzle: normal view, red filter, blue filter](docs/easy-strip.png)
 
-Sentences work the same way. Here two 10+ word English sentences are overlaid:
+Sentences work the same way. Here two 10+ word English sentences are printed on top of each other (with scribbles), so the page is unreadable by eye:
 
 - Blue: *"The quick brown fox jumps over the lazy dog near the quiet river"*
 - Red: *"Every great journey begins with a single small step forward today"*
@@ -48,8 +48,8 @@ When generating puzzles, both layers are drawn with the canvas `multiply` blend 
 ## Features
 
 - **Two pages**: `index.html` (camera) and `make.html` (puzzle maker), English and Arabic.
-- **Camera mode**: live camera with *Normal / Red filter / Blue filter*, a contrast slider and front/back camera switch.
-- **Photo mode**: pick an image (on phones this can also open the camera) and flip between filters.
+- **Camera page**: a clean live camera with *Normal / Red filter / Blue filter* buttons. The *Start camera* button only appears if the browser has not already allowed the camera, and if access is blocked the page shows step-by-step help for iPhone, Android and desktop, with Try again, Reload and Copy settings address buttons.
+- **Upload an image** (on the puzzle page): load a photo or screenshot of a puzzle and see it through both filters.
 - **Text puzzles**: type two sentences, they are auto-wrapped to fill the canvas with the largest possible font, then overlaid in blue and red.
 - **Shape puzzles**: pick two of 12 shapes. Difficulty levels add random scribbles, rotation and offsets so the shapes are hard to make out by eye. The hidden shape is drawn with a thicker stroke than the noise so it stands out under the filter.
 - **Preview** of the normal, red-filtered and blue-filtered result before you print.
@@ -66,7 +66,7 @@ python3 -m http.server 8000
 # open http://localhost:8000
 ```
 
-The `docs/` folder is a static site, so it is also what GitHub Pages serves. You can deploy it to any static host. Without HTTPS the live camera is blocked by the browser, but you can still load a picture of a puzzle with the photo button.
+The `docs/` folder is a static site, so it is also what GitHub Pages serves. You can deploy it to any static host. Without HTTPS the live camera is blocked by the browser. You can still preview a puzzle through both filters on the puzzle page.
 
 ## Real-world use (no app needed)
 
