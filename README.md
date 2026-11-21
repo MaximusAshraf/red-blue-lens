@@ -32,6 +32,16 @@ Sentences work the same way. Here two 10+ word English sentences are printed on 
 
 ![Text puzzle: normal view, red filter, blue filter](docs/text-strip.png)
 
+### Bonus: a message only the naked eye can read
+
+Ink that has both a lot of red and a lot of blue, like **magenta** (`#ff00ff`), is bright in the red channel *and* in the blue channel. Both filters treat it like white paper, so it vanishes in both views. Without a filter it stays perfectly readable.
+
+![Magenta text: readable normally, invisible through both filters](docs/normal-only-strip.png)
+
+*Left: normal view. Middle: red filter. Right: blue filter. The sentence disappears in both.*
+
+You can combine all three inks on one page: blue and red for the two hidden messages, and magenta for a message that only people *without* a filter can read.
+
 ## How it works
 
 The filter is just a per-pixel channel pick, with a contrast boost:
