@@ -3,7 +3,7 @@ const $ = s => document.querySelector(s);
 const L = {
   en: {
     title_cam:'Red/Blue Lens', title_make:'Red/Blue Lens - Make a puzzle',
-    mode_n:'Normal', mode_r:'Red filter', mode_b:'Blue filter',
+    mode_n:'Normal', mode_r:'Red filter', mode_b:'Blue filter', mirror:'↔︎ Mirror the picture (read reversed text)',
     start:'▶︎ Start camera', retry:'Try again', reload:'Reload page', copyaddr:'Copy settings address', copied:'Copied. Paste it in a new tab.',
     g_title:'Camera access is blocked', g_intro:'The browser needs your permission to use the camera. To turn it on:',
     g_ios:'1. Tap the “aA” icon in the address bar.\n2. Tap Website Settings, then Camera, then Allow.\n3. Or open the Settings app, then Safari, then Camera, and choose Allow or Ask.\n4. Come back here and tap “Try again”.',
@@ -30,7 +30,7 @@ const L = {
   },
   ar: {
     title_cam:'عدسة الأحمر والأزرق', title_make:'عدسة الأحمر والأزرق - اعمل لغز',
-    mode_n:'عادي', mode_r:'فلتر أحمر', mode_b:'فلتر أزرق',
+    mode_n:'عادي', mode_r:'فلتر أحمر', mode_b:'فلتر أزرق', mirror:'↔︎ اعكس الصورة (لقراءة الكلام المعكوس)',
     start:'▶︎ شغّل الكاميرا', retry:'حاول تاني', reload:'أعد تحميل الصفحة', copyaddr:'انسخ عنوان الإعدادات', copied:'اتنسخ. الصقه في تبويب جديد.',
     g_title:'الوصول للكاميرا مقفول', g_intro:'المتصفح محتاج إذنك عشان يستخدم الكاميرا. عشان تفتحها:',
     g_ios:'1. اضغط على أيقونة «aA» في شريط العنوان.\n2. اضغط إعدادات الموقع، ثم الكاميرا، ثم سماح.\n3. أو افتح تطبيق الإعدادات، ثم Safari، ثم الكاميرا، واختار سماح أو اسأل.\n4. ارجع هنا واضغط «حاول تاني».',

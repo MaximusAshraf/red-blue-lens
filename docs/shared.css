@@ -44,3 +44,4 @@ h3{margin:4px 0}
 textarea.m,#sm{border-color:#ff5cff}
 .chk{display:flex;align-items:center;gap:6px;background:var(--card);padding:10px 12px;border-radius:12px}
 .chk input{width:20px;height:20px;accent-color:var(--acc)}
+#mirror.on{background:var(--acc);color:#222}

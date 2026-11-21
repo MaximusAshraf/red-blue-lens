@@ -29,6 +29,7 @@
       <button class="m-r" data-m="r" data-i="mode_r"></button>
       <button class="m-b" data-m="b" data-i="mode_b"></button>
     </div>
+    <button class="mini" id="mirror" data-i="mirror" aria-pressed="false"></button>
     <button class="go" id="start" data-i="start" hidden></button>
   </div>
 </main>
@@ -37,7 +38,7 @@
 buildHeader();
 const K = 2.2, view = $('#view'), vid = document.createElement('video');
 vid.playsInline = true; vid.muted = true;
-let mode = 'n', stream = null, still = null, raf = 0, guideErr = '', lastKind = 'denied';
+let flip = false, mode = 'n', stream = null, still = null, raf = 0, guideErr = '', lastKind = 'denied';
 
 const UA = navigator.userAgent;
 const isIOS = /iPad|iPhone|iPod/.test(UA) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
@@ -86,16 +87,20 @@ function loop() {
   if (vid.videoWidth) {
     const sc = Math.min(1, 720 / Math.max(vid.videoWidth, vid.videoHeight));
     const w = Math.round(vid.videoWidth * sc), h = Math.round(vid.videoHeight * sc);
-    filterInto(w, h, c => c.drawImage(vid, 0, 0, w, h), view, mode, K);
+    filterInto(w, h, c => { if (flip) { c.translate(w, 0); c.scale(-1, 1); } c.drawImage(vid, 0, 0, w, h); }, view, mode, K);
   }
   raf = requestAnimationFrame(loop);
 }
 function drawStill() {
   const s = still, sc = Math.min(1, 1000 / Math.max(s.width, s.height));
   const w = Math.round(s.width * sc), h = Math.round(s.height * sc);
-  filterInto(w, h, c => c.drawImage(s, 0, 0, w, h), view, mode, K);
+  filterInto(w, h, c => { if (flip) { c.translate(w, 0); c.scale(-1, 1); } c.drawImage(s, 0, 0, w, h); }, view, mode, K);
 }
 
+$('#mirror').onclick = () => {
+  flip = !flip; $('#mirror').classList.toggle('on', flip); $('#mirror').setAttribute('aria-pressed', flip);
+  if (still) drawStill();
+};
 $('#start').onclick = startCam;
 $('#retry').onclick = startCam;
 $('#reload').onclick = () => location.reload();

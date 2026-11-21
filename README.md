@@ -58,7 +58,7 @@ When generating puzzles, both layers are drawn with the canvas `multiply` blend 
 ## Features
 
 - **Two pages**: `index.html` (camera) and `make.html` (puzzle maker), English and Arabic.
-- **Camera page**: a clean live camera with *Normal / Red filter / Blue filter* buttons. The *Start camera* button only appears if the browser has not already allowed the camera, and if access is blocked the page shows step-by-step help for iPhone, Android and desktop, with Try again, Reload and Copy settings address buttons.
+- **Camera page**: a clean live camera with *Normal / Red filter / Blue filter* buttons. The *Start camera* button only appears if the browser has not already allowed the camera, and if access is blocked the page shows step-by-step help for iPhone, Android and desktop, with Try again, Reload and Copy settings address buttons. A **Mirror** toggle flips the camera picture left to right so you can read reversed text.
 - **Mirror option**: tick *Mirror* for the blue, red or normal-view layer to flip it left to right, as if seen in a mirror (good for secret notes you read with a mirror).
 - **Normal-view layer**: an optional third sentence or shape drawn in magenta. It is invisible through both filters and readable without one.
 - **Upload an image** (on the puzzle page): load a photo or screenshot of a puzzle and see it through both filters.
