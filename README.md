@@ -25,6 +25,13 @@ The app is in **English by default**. Tap **عربي** in the top corner for Ara
 
 ![Easy puzzle: normal view, red filter, blue filter](docs/easy-strip.png)
 
+Sentences work the same way. Here two 10+ word English sentences are overlaid:
+
+- Blue: *"The quick brown fox jumps over the lazy dog near the quiet river"*
+- Red: *"Every great journey begins with a single small step forward today"*
+
+![Text puzzle: normal view, red filter, blue filter](docs/text-strip.png)
+
 ## How it works
 
 The filter is just a per-pixel channel pick, with a contrast boost:
